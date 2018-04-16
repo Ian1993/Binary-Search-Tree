@@ -1,3 +1,9 @@
+/*Author: Ian Nevills
+**Date:4/15/2018
+**Program: Binary Search Tree
+**File: main.cpp
+*/
+
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -18,9 +24,9 @@ List driver, recursive in nature, exits on a press of 8
 
 int main()
 {
-    bst *userList;
+    bst *userList = new bst();
 
-    userList = new bst();
+
 
     menuPrinter(userList);
 
@@ -41,7 +47,7 @@ void menuPrinter(bst *userList){
 
     int itemStock = 0;
 
-    int threshold = 0;
+
 
 
 
@@ -51,17 +57,19 @@ void menuPrinter(bst *userList){
 
     cout << "2: Save file" << endl;
 
-    cout << "3: Print your inventory list" << endl;
+    cout << "3: Print your tree" << endl;
 
-    cout << "4: Search for inventory below a threshold" << endl;
+    cout << "4: Search for minimum" << endl;
 
-    cout << "5: Search for the inventory of a particular item" << endl;
+    cout << "5: Search for maximum" << endl;
 
-    cout << "6: Add an item to the list" << endl;
+    cout << "6: Add an item to tree" << endl;
 
-    cout << "7: Delete an item from the list" << endl;
+    cout << "7: Delete an item tree" << endl;
 
-    cout << "8: Exit" << endl;
+    cout << "8: Find the number of instances of a string" << endl;
+
+    cout << "9: Exit" << endl;
 
     cin >> userSelection;
 
@@ -77,7 +85,17 @@ void menuPrinter(bst *userList){
 
         getline(cin,fileName);
 
+        itemStock = 1;
 
+        infile.open(fileName.c_str());
+
+        while(infile){
+
+            infile >> itemName;
+
+            userList -> set(itemName,itemStock);
+
+        }
 
         menuPrinter(userList);
     }
@@ -90,24 +108,23 @@ void menuPrinter(bst *userList){
 
         getline(cin,fileName);
 
-
+        userList->save_file(fileName);
 
         menuPrinter(userList);
     }
 
     else if(userSelection == 3){
 
-
+        userList->print();
 
         menuPrinter(userList);
     }
 
     else if(userSelection == 4){
 
-        cout << "Please enter an integer stock threshold below which you wish to search:" << endl;
 
-        cin >> threshold;
 
+        userList->min();
 
 
         menuPrinter(userList);
@@ -116,9 +133,7 @@ void menuPrinter(bst *userList){
     else if(userSelection == 5){
         cin.get();
 
-        cout << "Please enter an item name you wish to search for the stock of" << endl;
-
-        getline(cin,itemName);
+        userList->max();
 
 
 
@@ -128,9 +143,14 @@ void menuPrinter(bst *userList){
     else if(userSelection == 6){
 
 
-        cin.get();
+        cout << "Please enter the key string you wish to enter" << endl;
 
+        cin >> itemName;
 
+        cout << "Please enter the value you wish to associate with the key" << endl;
+        cin >> itemStock;
+
+        userList -> set(itemName,itemStock);
 
 
         menuPrinter(userList);
@@ -140,10 +160,36 @@ void menuPrinter(bst *userList){
 
         cin.get();
 
+        cout << "Please enter the key string you wish to delete" << endl;
+
+        cin.get();
+
+        getline(cin,itemName);
+
+        userList -> del(itemName);
+
 
 
         menuPrinter(userList);
     }
+
+    else if(userSelection == 8){
+
+        cin.get();
+
+        cout << "Please enter the key string you wish to find" << endl;
+
+        cin.get();
+
+        getline(cin,itemName);
+
+        userList -> find(itemName);
+
+
+
+        menuPrinter(userList);
+    }
+
 
 
 

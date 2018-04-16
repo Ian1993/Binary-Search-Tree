@@ -1,3 +1,9 @@
+/*Author: Ian Nevills
+**Date:4/15/2018
+**Program: Binary Search Tree
+**File: bst.cpp
+*/
+
 #include "bst.h"
 #include <iostream>
 #include <fstream>
@@ -8,14 +14,14 @@ bst::bst()
 {
     start = NULL;
 
-    mover = start;
+
     //ctor
 }
 
 bst::~bst()
 {
-    mover = start;
-    desthelp(mover);
+
+    desthelp(start);
     //dtor
 }
 
@@ -34,21 +40,96 @@ void bst::desthelp(node *mover){
 
 void bst::set(std::string key1, int val){
 
+
+
+    //mover1 = start;
+
     if(start == NULL){
 
         start = new node(key1);
 
-        start ->data = val;
+        start -> data = val;
     }
-    else if (start != NULL){
-        //if
+    else{
+
+        bstaddhelper(val,key1,start);
+
     }
 
-    mover = start;
+
+
 
 }
 
-void bst::bstaddhelper(std::string key1, node *HERE){
+void bst::bstaddhelper(int val,std::string key1, node *mover){
+
+    if(mover -> key > key1){
+        if(mover -> left == NULL){
+            mover -> left = new node(key1);
+            mover -> left -> data = val;
+        }
+        else{
+            bstaddhelper(val,key1,mover -> left);
+        }
+
+
+    }
+
+    else if(mover -> key == key1){
+
+        mover -> data = mover -> data + val;
+
+    }
+
+    else{
+
+        if(mover -> right == NULL){
+            mover -> right = new node(key1);
+            mover -> right -> data = val;
+        }
+        else{
+            bstaddhelper(val,key1,mover -> right);
+        }
+
+
+    }
+
+    //return *mover;
+}
+
+void bst::bstattachhelper(node *attach, node *mover){
+
+    if(mover -> key > attach -> key){
+        if(mover -> left == NULL){
+            mover -> left = attach;
+
+        }
+        else{
+            bstattachhelper(attach,mover -> left);
+        }
+
+
+    }
+
+    else{
+
+        if(mover -> right == NULL){
+            mover -> right = attach;
+
+        }
+        else{
+            bstattachhelper(attach,mover -> right);
+        }
+
+
+    }
+
+    //return *mover;
+}
+
+
+
+void bst::bstdelhelper(std::string key1, node *mover){
 
     if(mover == NULL){
 
@@ -56,37 +137,71 @@ void bst::bstaddhelper(std::string key1, node *HERE){
     }
     else if (mover -> key < key1){
 
-        mover = mover -> right;
 
-        bstaddhelper(key1,mover);
+        bstdelhelper(key1,mover->right);
     }
     else if (mover -> key > key1){
 
-        mover = mover -> left;
 
-        bstaddhelper(key1,mover);
-    }
-
-
-}
-
-void bst::bstdelhelper(std::string key1, node *HERE){
-
-    if(mover == NULL){
-
+        bstdelhelper(key1,mover->left);
 
     }
-    else if (mover -> key < key1){
+    else if(mover -> left == NULL && mover -> right == NULL){
 
-        mover = mover -> right;
+        delete mover;
 
-        bstaddhelper(key1,mover);
     }
-    else if (mover -> key > key1){
 
-        mover = mover -> left;
+    else{
 
-        bstaddhelper(key1,mover);
+        if(mover -> left == NULL){
+
+            temp = mover -> right;
+
+            bstattachhelper(temp, start);
+
+            delete mover;
+
+
+        }
+
+        else if(mover -> right == NULL){
+
+            temp = mover -> right;
+
+            bstattachhelper(temp, start);
+
+            delete mover;
+
+
+        }
+        else{
+
+            temp = mover -> right;
+            mover1 = NULL;
+
+            while(temp -> left != NULL){
+                mover1 = temp;
+                temp = temp -> left;
+            }
+
+            mover -> key = temp -> key;
+
+            mover -> data = temp -> data;
+
+
+
+        }
+
+        if(mover1 != NULL){
+            bstdelhelper(mover1 -> left -> key, mover1 -> left);
+        }
+        else{
+
+            bstdelhelper(mover1 -> right -> key, mover1 -> right);
+        }
+
+
     }
 
 
@@ -98,7 +213,7 @@ void bst::bstminhelper(node *mover){
 
     if(mover -> left == NULL){
 
-
+        std::cout << "The minimum is: " << mover -> key << " " << mover -> data << std::endl;
     }
     else if (mover -> left != NULL){
 
@@ -117,7 +232,7 @@ void bst::bstmaxhelper(node *mover){
 
     if(mover -> right == NULL){
 
-
+        std::cout << "The minimum is: " << mover -> key << " " << mover -> data << std::endl;
     }
     else if (mover -> right != NULL){
 
@@ -130,14 +245,22 @@ void bst::bstmaxhelper(node *mover){
 
 }
 
-int bst::find(std::string key1){
+void bst::findhelper(std::string key1, node *mover){
 
-    int x = 0;
+    if(mover -> key != key1){
+        findhelper(key1,mover->left);
+        findhelper(key1,mover->right);
+    }
+    std::cout << key1 << " " << mover -> data << std::endl;
 
-    return x;
 }
 
-void bst::printhelper(node *nope){
+void bst::find(std::string key1){
+
+   findhelper(key1,start);
+}
+
+void bst::printhelper(node *mover){
 
     if(mover !=NULL){
 
@@ -166,9 +289,9 @@ void bst::savehelper(std::ofstream *file, node *mover){
 
 void bst::print(){
 
-    mover = start;
 
-    printhelper(mover);
+
+    printhelper(start);
 
 
 }
@@ -177,13 +300,13 @@ void bst::min(){
 
 
 
-    mover = start;
 
 
 
-    bstminhelper(mover);
 
-    std::cout << "The minimum is: " << mover -> key << " " << mover -> data << std::endl;
+    bstminhelper(start);
+
+
 
 }
 
@@ -191,28 +314,28 @@ void bst::max(){
 
 
 
-    mover = start;
 
 
 
-    bstmaxhelper(mover);
+
+    bstmaxhelper(start);
 
 
-    std::cout << "The minimum is: " << mover -> key << " " << mover -> data << std::endl;
+
 
 }
 
 void bst::save_file(std::string name){
 
-    mover = start;
 
-    out.open((name+".txt").c_str());
+
+    out.open(name.c_str());
 
     std::ofstream *temp;
 
     temp = &out;
 
-    savehelper(temp,mover);
+    savehelper(temp,start);
 
     out.close();
 
@@ -220,4 +343,6 @@ void bst::save_file(std::string name){
 
 void bst::del(std::string key1){
 
+
+    bstdelhelper(key1,start);
 }
